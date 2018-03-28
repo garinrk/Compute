@@ -1,0 +1,21 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+float4 color;
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> Result; //resulting texture
+
+[numthreads(8,8,1)]
+void Life (uint3 id : SV_DispatchThreadID) //xyz, the point in the texture
+{
+	//serpensky's triangle
+	//Result[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+	
+	//red
+	//Result[id.xy] = float4(1.0, 0, 0, 0);
+	
+	//passed in color value
+	Result[id.xy] = (id.x & id.y) * color;
+}
