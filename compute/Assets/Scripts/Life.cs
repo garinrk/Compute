@@ -8,12 +8,11 @@ public class Life : MonoBehaviour {
 
     [SerializeField] private ComputeShader compute;
     [SerializeField] private RenderTexture result;
-
-    #endregion
-
-    #region Public Fields
-
-    public Color myColor;
+    [SerializeField] private int width = 512;
+    [SerializeField] private int height = 512;
+    [SerializeField] private Texture photoInput;
+    [SerializeField] private Material mat;
+    
 
     #endregion
 
@@ -26,22 +25,34 @@ public class Life : MonoBehaviour {
     // Use this for initialization
     void Start () {
 
-  
+        result = new RenderTexture(width, height, 24);
+        result.enableRandomWrite = true;
+        result.Create();
 
-	}
+    }
 	
 	// Update is called once per frame
 	void Update () {
 
         kernelID = compute.FindKernel("Life"); //returns an id for this function
 
-        result = new RenderTexture(512, 512, 24);
+        compute.SetTexture(kernelID, "pictureInput", photoInput); //send in picture
+        compute.SetFloat("width", width);
+        compute.SetFloat("height", height);
+
+        result = new RenderTexture(width, height, 24);
+        result.wrapMode = TextureWrapMode.Repeat; //wrap around texture
         result.enableRandomWrite = true;
+        result.filterMode = FilterMode.Point; //texture pixels become blocky up close
+        //how to render when transformed by 3d things
+        result.useMipMap = false;
         result.Create();
 
+        compute.SetTexture(kernelID, "Result", result);
+        compute.Dispatch(kernelID, width / 8, height / 8, 1);
 
-        compute.SetTexture(kernelID, "Result", result); //out var from .compute shader
-        compute.Dispatch(kernelID, 512 / 8, 512 / 8, 1); //thread for every pixel and rendering it
-        compute.SetVector("color", myColor);
+        photoInput = result;
+        mat.mainTexture = photoInput;
+        
     }
 }

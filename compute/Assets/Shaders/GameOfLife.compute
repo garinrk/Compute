@@ -1,7 +1,9 @@
 ﻿// Each #kernel tells which function to compile; you can have many kernels
-#pragma kernel CSMain
+#pragma kernel Life
 
-float4 color;
+float width;
+float height;
+sampler2D pictureInput;
 
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
@@ -10,12 +12,64 @@ RWTexture2D<float4> Result; //resulting texture
 [numthreads(8,8,1)]
 void Life (uint3 id : SV_DispatchThreadID) //xyz, the point in the texture
 {
-	//serpensky's triangle
-	//Result[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+
+	//DEATH
+	//If alive and with less than two live neighbors [underpopulation]
+	//If alive with more than three neighbors [overpopulation]
 	
-	//red
-	//Result[id.xy] = float4(1.0, 0, 0, 0);
+	//LIFE
+	//If alive and with two or three neighbors [next gen]
 	
-	//passed in color value
-	Result[id.xy] = (id.x & id.y) * color;
+	//REGENERATION
+	//If dead with three neighbors [reproduction]
+	
+
+	float2 actualPosition = float2((id.x) / width, (id.y) / height);
+	float2 actualPixelSize = float2(1.0 / width, 1.0 / height);
+
+	float4 currentPixel = tex2Dlod(pictureInput, float4(actualPosition.x, actualPosition.y, 0, 0));
+
+	float4 neighbors = float4(0, 0, 0, 0);
+
+	//0 1 2
+	//3 X 5
+	//6 7 8
+	
+	//0 1 2
+	neighbors += tex2Dlod(pictureInput, float4(actualPosition.x - actualPixelSize.x, actualPosition.y + actualPixelSize.y, 0, 0)); 
+	neighbors += tex2Dlod(pictureInput, float4(actualPosition.x, actualPosition.y + actualPixelSize.y, 0, 0));
+	neighbors += tex2Dlod(pictureInput, float4(actualPosition.x + actualPixelSize.x, actualPosition.y + actualPixelSize.y, 0, 0));
+
+	//3 5
+	neighbors += tex2Dlod(pictureInput, float4(actualPosition.x - actualPixelSize.x, actualPosition.y, 0, 0));
+	neighbors += tex2Dlod(pictureInput, float4(actualPosition.x + actualPixelSize.x, actualPosition.y, 0, 0));
+
+	//6 7 8
+	neighbors += tex2Dlod(pictureInput, float4(actualPosition.x - actualPixelSize.x, actualPosition.y - actualPixelSize.y, 0, 0));
+	neighbors += tex2Dlod(pictureInput, float4(actualPosition.x, actualPosition.y - actualPixelSize.y, 0, 0));
+	neighbors += tex2Dlod(pictureInput, float4(actualPosition.x + actualPixelSize.x, actualPosition.y - actualPixelSize.y, 0, 0));
+
+	//if we're alive
+	if(currentPixel.r > 0.5)
+	{
+		if(neighbors.r > 1.5 && neighbors.r < 3.5) //2-3
+		{
+			//alive!
+			Result[id.xy] = float4(1, 1, 1, 1);
+		}
+		else
+		{
+			//death!
+			Result[id.xy] = float4(0, 0, 0, 1);
+		}
+	}
+	//we're dead!
+	else {
+		if (neighbors.r > 2.5 && neighbors.r < 3.5) { // == 3
+			Result[id.xy] = float4(1, 1, 1, 1);
+		}
+		else {
+			Result[id.xy] = float4(0, 0, 0, 1);
+		}
+	}
 }
