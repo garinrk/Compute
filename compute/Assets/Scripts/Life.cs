@@ -29,11 +29,6 @@ public class Life : MonoBehaviour {
         result.enableRandomWrite = true;
         result.Create();
 
-    }
-	
-	// Update is called once per frame
-	void Update () {
-
         kernelID = compute.FindKernel("Life"); //returns an id for this function
 
         compute.SetTexture(kernelID, "pictureInput", photoInput); //send in picture
@@ -53,6 +48,31 @@ public class Life : MonoBehaviour {
 
         photoInput = result;
         mat.mainTexture = photoInput;
+
+    }
+	
+	// Update is called once per frame
+	void Update () {
+
+        //kernelID = compute.FindKernel("Life"); //returns an id for this function
+
+        //compute.SetTexture(kernelID, "pictureInput", photoInput); //send in picture
+        //compute.SetFloat("width", width);
+        //compute.SetFloat("height", height);
+
+        //result = new RenderTexture(width, height, 24);
+        //result.wrapMode = TextureWrapMode.Repeat; //wrap around texture
+        //result.enableRandomWrite = true;
+        //result.filterMode = FilterMode.Point; //texture pixels become blocky up close
+        ////how to render when transformed by 3d things
+        //result.useMipMap = false;
+        //result.Create();
+
+        //compute.SetTexture(kernelID, "Result", result);
+        //compute.Dispatch(kernelID, width / 8, height / 8, 1);
+
+        //photoInput = result;
+        //mat.mainTexture = photoInput;
         
     }
 }
