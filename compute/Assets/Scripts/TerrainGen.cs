@@ -10,7 +10,7 @@ public class TerrainGen : MonoBehaviour {
     [SerializeField] private Terrain myTerr;
     [SerializeField] private Terrain backup;
     [SerializeField] private Texture2D tex;
-
+    [SerializeField] private Life gameOfLife;
     #endregion
 
     #region Private Fields
@@ -25,14 +25,20 @@ public class TerrainGen : MonoBehaviour {
     #region Unity Lifecycle
 
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
 
         width = myTerr.terrainData.heightmapWidth;
         height = myTerr.terrainData.heightmapHeight;
 
         myTerr.heightmapMaximumLOD = 0;
-		
-	}
+
+        Color[] colorData = gameOfLife.LifeOneFrame();
+
+        print("Color data is " + colorData.Length + " large");
+
+
+    }
 
     private void OnDisable()
     {
@@ -47,17 +53,17 @@ public class TerrainGen : MonoBehaviour {
     // Update is called once per frame
     void Update () {
 
-        heightData = myTerr.terrainData.GetHeights(0, 0, width, height);
+        //heightData = myTerr.terrainData.GetHeights(0, 0, width, height);
 
-        for(int i = 0; i < width / 2; i++)
-        {
-            for(int j = 0; j < height; j++)
-            {
-                heightData[i, j] = 0.24f;
-            }
-        }
+        //for(int i = 0; i < width / 2; i++)
+        //{
+        //    for(int j = 0; j < height; j++)
+        //    {
+        //        heightData[i, j] = 0.24f;
+        //    }
+        //}
 
-        myTerr.terrainData.SetHeights(0, 0, heightData);
+        //myTerr.terrainData.SetHeights(0, 0, heightData);
 	}
 
     #endregion
