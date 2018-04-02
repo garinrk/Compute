@@ -99,8 +99,16 @@ public class Life : MonoBehaviour {
         compute.SetTexture(kernelID, "Result", result);
         compute.Dispatch(kernelID, width / 8, height / 8, 1);
 
-        photoInput = result;
-        mat.mainTexture = photoInput;
+        mat.mainTexture = result;
+
+        return ConvertToTexture2D(mat.mainTexture);
+
+        //Texture2D resultTex2D = (Texture2D)mat.mainTexture;
+
+        //Texture resultTex = mat.mainTexture;
+        //print("H: " + resultTex.height + " W: " + resultTex.width);
+
+        
 
         //TODO: need to return color data off of the final rendered texture
         // made off of the compute shader.
@@ -109,5 +117,18 @@ public class Life : MonoBehaviour {
 
         //returnTex.Apply();
         //return returnTex.GetPixels();
+    }
+
+    private Color[] ConvertToTexture2D(Texture i_tex)
+    {
+        Texture2D result = new Texture2D(i_tex.width, i_tex.height, TextureFormat.RGBA32, false);
+
+        RenderTexture renderTex = new RenderTexture(i_tex.width, i_tex.height, 32);
+        Graphics.Blit(i_tex, renderTex);
+
+        result.ReadPixels(new Rect(0, 0, renderTex.width, renderTex.height), 0, 0);
+        result.Apply();
+
+        return result.GetPixels();
     }
 }

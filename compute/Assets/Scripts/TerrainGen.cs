@@ -7,9 +7,7 @@ public class TerrainGen : MonoBehaviour {
 
     #region Unity Serialized Fields
 
-    [SerializeField] private Terrain myTerr;
-    [SerializeField] private Terrain backup;
-    [SerializeField] private Texture2D tex;
+    
     [SerializeField] private Life gameOfLife;
     #endregion
 
@@ -19,36 +17,51 @@ public class TerrainGen : MonoBehaviour {
     private int height;
     float[,] heightData;
     float[,] backupHeightData;
-
+    private Terrain myTerr;
     #endregion
 
     #region Unity Lifecycle
+
+    private void Awake()
+    {
+        myTerr = GetComponent<Terrain>();
+    }
 
     // Use this for initialization
     void Start()
     {
 
-        width = myTerr.terrainData.heightmapWidth;
-        height = myTerr.terrainData.heightmapHeight;
-
-        myTerr.heightmapMaximumLOD = 0;
-
         Color[] colorData = gameOfLife.LifeOneFrame();
+        int square = (int)Mathf.Sqrt(colorData.Length);
+        //myTerr.terrainData.size = new Vector3(square,0,square);
 
-        print("Color data is " + colorData.Length + " large");
 
+        int colorIndex = 0;
+        //heightData = myTerr.terrainData.GetHeights(0, 0, myTerr.terrainData.heightmapWidth, myTerr.terrainData.heightmapHeight);
+        heightData = new float[square, square];
+        for (int i = 0; i < square; i++)
+        {
+            for(int j = 0; j < square; j++)
+            {
+                heightData[i, j] = colorData[colorIndex].r;
+                
+                colorIndex++;
+            }
+        }
+
+        myTerr.terrainData.SetHeights(0, 0, heightData);
 
     }
 
-    private void OnDisable()
-    {
-        int backupWidth = backup.terrainData.heightmapWidth;
-        int backupHeight = backup.terrainData.heightmapHeight;
+    //private void OnDisable()
+    //{
+    //    int backupWidth = backup.terrainData.heightmapWidth;
+    //    int backupHeight = backup.terrainData.heightmapHeight;
 
-        backupHeightData = backup.terrainData.GetHeights(0, 0, backupWidth, backupHeight);
+    //    backupHeightData = backup.terrainData.GetHeights(0, 0, backupWidth, backupHeight);
 
-        myTerr.terrainData.SetHeights(0, 0, backupHeightData);
-    }
+    //    myTerr.terrainData.SetHeights(0, 0, backupHeightData);
+    //}
 
     // Update is called once per frame
     void Update () {
