@@ -37,15 +37,6 @@ public class NoiseControl : MonoBehaviour {
 
     }
 
-    private void Update()
-    {
-        //if (Input.GetKeyUp(KeyCode.O))
-        //{
-        //    UpdateNoiseTexture();
-        //}
-
-        //UpdateNoiseTexture();
-    }
 
     #endregion
 

@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class LifeTerrainGen : MonoBehaviour
 {
-
-
     #region Unity Serialized Fields
     [SerializeField] private LifeControl gameOfLife;
     #endregion
@@ -21,7 +19,6 @@ public class LifeTerrainGen : MonoBehaviour
     {
         myTerr = GetComponent<Terrain>();
     }
-
 
     #endregion
 
