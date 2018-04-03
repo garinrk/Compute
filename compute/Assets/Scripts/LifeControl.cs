@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Life : MonoBehaviour {
+public class LifeControl : MonoBehaviour {
 
     #region Unity Serialized Fields
 
@@ -12,7 +12,7 @@ public class Life : MonoBehaviour {
     [SerializeField] private int height = 512;
     [SerializeField] private Texture photoInput;
     [SerializeField] private Material mat;
-    [SerializeField] private TerrainGen tg;
+    [SerializeField] private LifeTerrainGen tg;
     
 
     #endregion
