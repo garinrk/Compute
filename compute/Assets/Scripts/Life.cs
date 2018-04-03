@@ -12,6 +12,7 @@ public class Life : MonoBehaviour {
     [SerializeField] private int height = 512;
     [SerializeField] private Texture photoInput;
     [SerializeField] private Material mat;
+    [SerializeField] private TerrainGen tg;
     
 
     #endregion
@@ -26,25 +27,27 @@ public class Life : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        //kernelID = compute.FindKernel("Life"); //returns an id for this function
+        kernelID = compute.FindKernel("Life"); //returns an id for this function
 
-        //compute.SetTexture(kernelID, "pictureInput", photoInput); //send in picture
-        //compute.SetFloat("width", width);
-        //compute.SetFloat("height", height);
+        compute.SetTexture(kernelID, "pictureInput", photoInput); //send in picture
+        compute.SetFloat("width", width);
+        compute.SetFloat("height", height);
 
-        //result = new RenderTexture(width, height, 24);
-        //result.wrapMode = TextureWrapMode.Repeat; //wrap around texture
-        //result.enableRandomWrite = true;
-        //result.filterMode = FilterMode.Point; //texture pixels become blocky up close
-        ////how to render when transformed by 3d things
-        //result.useMipMap = false;
-        //result.Create();
+        result = new RenderTexture(width, height, 24);
+        result.wrapMode = TextureWrapMode.Repeat; //wrap around texture
+        result.enableRandomWrite = true;
+        result.filterMode = FilterMode.Point; //texture pixels become blocky up close
+        //how to render when transformed by 3d things
+        result.useMipMap = false;
+        result.Create();
 
-        //compute.SetTexture(kernelID, "Result", result);
-        //compute.Dispatch(kernelID, width / 8, height / 8, 1);
+        compute.SetTexture(kernelID, "Result", result);
+        compute.Dispatch(kernelID, width / 8, height / 8, 1);
 
-        //photoInput = result;
-        //mat.mainTexture = photoInput;
+        photoInput = result;
+        mat.mainTexture = photoInput;
+
+        tg.UpdateTerrain(ConvertToTexture2D(mat.mainTexture));
 
     }
 

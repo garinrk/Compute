@@ -22,20 +22,10 @@ public class TerrainGen : MonoBehaviour
         myTerr = GetComponent<Terrain>();
     }
 
-    // Use this for initialization
-
-    private void Update()
-    {
-
-        Color[] colorData = gameOfLife.LifeOneFrame();
-        int square = (int)Mathf.Sqrt(colorData.Length);
-
-        CopyColorsToHeights(colorData, square);
-
-        myTerr.terrainData.SetHeights(0, 0, heightData);
-    }
 
     #endregion
+
+    #region Private Interface
 
     private void CopyColorsToHeights(Color[] i_colorData, int i_dim)
     {
@@ -51,4 +41,18 @@ public class TerrainGen : MonoBehaviour
             }
         }
     }
+
+    #endregion
+
+    #region Public Interface
+    public void UpdateTerrain(Color[] i_colorData)
+    {
+        int square = (int)Mathf.Sqrt(i_colorData.Length);
+
+        CopyColorsToHeights(i_colorData, square);
+
+        myTerr.terrainData.SetHeights(0, 0, heightData);
+    }
+
+    #endregion
 }
