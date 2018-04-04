@@ -206,9 +206,7 @@ GameObject:
   m_Component:
   - component: {fileID: 438503571}
   - component: {fileID: 438503570}
-  - component: {fileID: 438503569}
   - component: {fileID: 438503568}
-  - component: {fileID: 438503572}
   m_Layer: 0
   m_Name: GameOfLife_quad
   m_TagString: Untagged
@@ -248,20 +246,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &438503569
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 438503567}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Convex: 0
-  m_InflateMesh: 0
-  m_SkinWidth: 0.01
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!33 &438503570
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -282,24 +266,6 @@ Transform:
   m_Father: {fileID: 1729037006}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &438503572
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 438503567}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 834383b69fc2ff1419e9f49ad410077f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  compute: {fileID: 7200000, guid: 53d96a37430860e4fb4d00e3a2cfb3fa, type: 3}
-  result: {fileID: 0}
-  width: 128
-  height: 128
-  photoInput: {fileID: 2800000, guid: 619b8c6a0d497af4e9d323a44f3b1d74, type: 3}
-  mat: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
-  tg: {fileID: 1823610182}
 --- !u!1 &753438727
 GameObject:
   m_ObjectHideFlags: 0
@@ -380,10 +346,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 753438727}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 828f318cc1501224a873a27ed9cf88f0, type: 3}
+  m_Script: {fileID: 11500000, guid: 56a835f21a320a84d94896be0ede0ad6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  noiseGen: {fileID: 1019562917}
+  shader: {fileID: 7200000, guid: 3be3226dbd08291489729f325b365b39, type: 3}
+  updateEverySeconds: 0.5
+  photoInput: {fileID: 2800000, guid: bb80e9083ccfcab4ea02a4bb268bd927, type: 3}
+  renderDestination: {fileID: 1019562918}
+  width: 128
+  height: 128
+  currentTex: {fileID: 0}
 --- !u!1 &1019562916
 GameObject:
   m_ObjectHideFlags: 0
@@ -393,9 +365,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1019562921}
   - component: {fileID: 1019562920}
-  - component: {fileID: 1019562919}
   - component: {fileID: 1019562918}
-  - component: {fileID: 1019562917}
   m_Layer: 0
   m_Name: NoiseGen_quad
   m_TagString: Untagged
@@ -403,20 +373,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1019562917
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1019562916}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dacb39535e52d624caa3cf22945ab9f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  noiseShader: {fileID: 7200000, guid: 3be3226dbd08291489729f325b365b39, type: 3}
-  resolution: 128
-  ntg: {fileID: 753438731}
 --- !u!23 &1019562918
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -449,20 +405,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &1019562919
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1019562916}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Convex: 0
-  m_InflateMesh: 0
-  m_SkinWidth: 0.01
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!33 &1019562920
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -688,7 +630,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1823610178}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2947c807b99b0f48b50d8ba75d51439, type: 3}
+  m_Script: {fileID: 11500000, guid: 56a835f21a320a84d94896be0ede0ad6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameOfLife: {fileID: 438503572}
+  shader: {fileID: 7200000, guid: 53d96a37430860e4fb4d00e3a2cfb3fa, type: 3}
+  updateEverySeconds: 0.5
+  photoInput: {fileID: 2800000, guid: 619b8c6a0d497af4e9d323a44f3b1d74, type: 3}
+  renderDestination: {fileID: 438503568}
+  width: 128
+  height: 128
+  currentTex: {fileID: 0}

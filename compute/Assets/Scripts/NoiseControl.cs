@@ -2,20 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NoiseControl : MonoBehaviour {
+public class NoiseControl : MonoBehaviour
+{
 
     #region Unity Serialized Fields
 
     [SerializeField] private ComputeShader noiseShader;
     [SerializeField] private int resolution = 128;
-    [SerializeField] private NoiseTerrainGen ntg;
+    [SerializeField] private NoiseTerrain ntg;
 
     #endregion
 
     #region Private Fields
 
     private Renderer renderer;
-    private RenderTexture rendererTex;
+    private RenderTexture renderTex;
 
     #endregion
 
@@ -29,9 +30,9 @@ public class NoiseControl : MonoBehaviour {
 
     private void Start()
     {
-        rendererTex = new RenderTexture(resolution, resolution, 24);
-        rendererTex.enableRandomWrite = true;
-        rendererTex.Create();
+        renderTex = new RenderTexture(resolution, resolution, 24);
+        renderTex.enableRandomWrite = true;
+        renderTex.Create();
 
         InvokeRepeating("UpdateNoiseTexture", 0, 0.5f);
 
@@ -47,13 +48,13 @@ public class NoiseControl : MonoBehaviour {
         int kernelID = noiseShader.FindKernel("CSMain");
         noiseShader.SetInt("RandOffset", (int)(Time.timeSinceLevelLoad * 100));
 
-        noiseShader.SetTexture(kernelID, "Result", rendererTex);
+        noiseShader.SetTexture(kernelID, "Result", renderTex);
         noiseShader.Dispatch(kernelID, resolution / 8, resolution / 8, 1);
 
-        renderer.material.SetTexture("_MainTex", rendererTex);
+        renderer.material.SetTexture("_MainTex", renderTex);
 
         Color[] colorData = ConvertToTexture2D(renderer.material.mainTexture);
-        ntg.UpdateTerrain(colorData);
+        //ntg.UpdateTerrain(colorData);
     }
 
     private Color[] ConvertToTexture2D(Texture i_tex)

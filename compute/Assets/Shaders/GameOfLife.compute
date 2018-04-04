@@ -1,5 +1,5 @@
 ﻿// Each #kernel tells which function to compile; you can have many kernels
-#pragma kernel Life
+#pragma kernel CSMain
 
 float width;
 float height;
@@ -10,7 +10,7 @@ sampler2D pictureInput;
 RWTexture2D<float4> Result; //resulting texture
 
 [numthreads(8,8,1)]
-void Life (uint3 id : SV_DispatchThreadID) //xyz, the point in the texture
+void CSMain (uint3 id : SV_DispatchThreadID) //xyz, the point in the texture
 {
 
 	//DEATH
