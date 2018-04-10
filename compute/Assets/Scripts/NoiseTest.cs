@@ -81,6 +81,8 @@ public class NoiseTest : MonoBehaviour {
         hashBuffer.SetData(hash);
         gradientsBuffer.SetData(gradients2D);
 
+        shader.SetBuffer(kernelID, "hash", hashBuffer);
+        shader.SetBuffer(kernelID, "gradients2D", gradientsBuffer);
         shader.SetInt("RandOffset", (int)(Time.timeSinceLevelLoad * 100));
 
         currentTex = new RenderTexture(width, height, 24);

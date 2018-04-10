@@ -366,6 +366,7 @@ GameObject:
   - component: {fileID: 1019562921}
   - component: {fileID: 1019562920}
   - component: {fileID: 1019562918}
+  - component: {fileID: 1019562917}
   m_Layer: 0
   m_Name: NoiseGen_quad
   m_TagString: Untagged
@@ -373,6 +374,24 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &1019562917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1019562916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb4c320541ddb424389632bcf8bf3d6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shader: {fileID: 7200000, guid: 3be3226dbd08291489729f325b365b39, type: 3}
+  updateEverySeconds: 0.5
+  photoInput: {fileID: 2800000, guid: bb80e9083ccfcab4ea02a4bb268bd927, type: 3}
+  renderDestination: {fileID: 1019562918}
+  width: 128
+  height: 128
+  currentTex: {fileID: 0}
 --- !u!23 &1019562918
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -386,7 +405,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a89dd78d7f09e3d4486a48f513b1c0eb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
