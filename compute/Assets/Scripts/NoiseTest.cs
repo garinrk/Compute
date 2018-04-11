@@ -8,7 +8,8 @@ public class NoiseTest : MonoBehaviour {
 
     [SerializeField] protected ComputeShader shader;
     [SerializeField] private float updateEverySeconds = 0.5f;
-    [SerializeField] protected Texture photoInput;
+    [SerializeField] protected Texture permTexture;
+    [SerializeField] protected Texture gradTexture;
     [SerializeField] private Renderer renderDestination;
     [SerializeField] private int width = 128;
     [SerializeField] private int height = 128;
@@ -22,9 +23,7 @@ public class NoiseTest : MonoBehaviour {
 
     private int kernelID = 0;
     private Material destinationMaterial;
-
-    #endregion
-
+    
     private static int[] hash = {
         151,160,137, 91, 90, 15,131, 13,201, 95, 96, 53,194,233,  7,225,
         140, 36,103, 30, 69,142,  8, 99, 37,240, 21, 10, 23,190,  6,148,
@@ -72,18 +71,19 @@ public class NoiseTest : MonoBehaviour {
         new Vector2(-1f,-1f).normalized
     };
 
+    private ComputeBuffer hashBuffer; 
+    private ComputeBuffer gradientsBuffer;
+    private int randHash;
+    private int randGradient;
+
+
+    #endregion
+
+
     // Use this for initialization
     void Start () {
 
-        ComputeBuffer hashBuffer = new ComputeBuffer(hash.Length, sizeof(int), ComputeBufferType.Default);
-        ComputeBuffer gradientsBuffer = new ComputeBuffer(gradients2D.Length, sizeof(float) * 2, ComputeBufferType.Default);
-
-        hashBuffer.SetData(hash);
-        gradientsBuffer.SetData(gradients2D);
-
-        shader.SetBuffer(kernelID, "hash", hashBuffer);
-        shader.SetBuffer(kernelID, "gradients2D", gradientsBuffer);
-        shader.SetInt("RandOffset", (int)(Time.timeSinceLevelLoad * 100));
+        kernelID = shader.FindKernel("CSMain");
 
         currentTex = new RenderTexture(width, height, 24);
         currentTex.wrapMode = TextureWrapMode.Repeat;
@@ -94,14 +94,41 @@ public class NoiseTest : MonoBehaviour {
 
         shader.SetTexture(kernelID, "Result", currentTex);
         shader.Dispatch(kernelID, width / 8, height / 8, 1);
-        photoInput = currentTex;
-        renderDestination.material.mainTexture = currentTex;
+        permTexture = currentTex;
+        renderDestination.material.mainTexture = permTexture;
 
-
+        //InvokeRepeating("UpdateTexture", 0.0f, 0.5f);
     }
 	
 	// Update is called once per frame
-	void Update () {
-		
-	}
+	void UpdateTexture () {
+
+        randHash = Random.Range(0, hash.Length);
+        randGradient = Random.Range(0, gradients2D.Length);
+
+
+        hashBuffer.SetData(hash);
+        gradientsBuffer.SetData(gradients2D);
+
+        shader.SetBuffer(kernelID, "hash", hashBuffer);
+        shader.SetBuffer(kernelID, "gradients2D", gradientsBuffer);
+        shader.SetInt("randHash", randHash);
+        shader.SetInt("randGraident", randGradient);
+        shader.SetInt("RandOffset", (int)(Time.timeSinceLevelLoad * 100));
+        currentTex = new RenderTexture(width, height, 24);
+        currentTex.wrapMode = TextureWrapMode.Repeat;
+        currentTex.enableRandomWrite = true;
+        currentTex.filterMode = FilterMode.Point;
+
+        currentTex.Create();
+
+        shader.SetTexture(kernelID, "Result", currentTex);
+        shader.SetTexture(kernelID, "permTexture", permTexture);
+        shader.SetTexture(kernelID, "gradTexture", gradTexture);
+        shader.Dispatch(kernelID, width / 8, height / 8, 1);
+        permTexture = currentTex;
+        renderDestination.material.mainTexture = currentTex;
+
+    }
+
 }

@@ -9,129 +9,124 @@
 // with cs.SetTexture
 int RandOffset;
 RWTexture2D<float4> Result;
-StructuredBuffer<int> hash;
-StructuredBuffer<float2> gradients2D;
 
-int hashMask = 255;
+//
+//
+//// Function to linearly interpolate between a0 and a1
+//// Weight w should be in the range [0.0, 1.0]
+//float lerp(float a0, float a1, float w) {
+//	return (1.0f - w)*a0 + w * a1;
+//}
+//
+//// Computes the dot product of the distance and gradient vectors.
+//float dotGridGradient(float ix, float iy, float x, float y) {
+//
+//
+//	// Compute the distance vector
+//	float dx = x - ix;
+//	float dy = y - iy;
+//
+//	// Compute the dot-product
+//	return (dx*gradients2D[ix] + dy * gradients2D[iy]);
+//}
+//
+//// Compute Perlin noise at coordinates x, y
+//float perlin(float x, float y) {
+//
+//	// Determine grid cell coordinates
+//	float x0 = floor(x);
+//	float x1 = x0 + 1;
+//	float y0 = floor(y);
+//	float y1 = y0 + 1;
+//
+//	// Determine interpolation weights
+//	// Could also use higher order polynomial/s-curve here
+//	float sx = x - x0;
+//	float sy = y - y0;
+//
+//	// Interpolate between grid point gradients
+//	float n0, n1, ix0, ix1, value;
+//	n0 = dotGridGradient(x0, y0, x, y);
+//	n1 = dotGridGradient(x1, y0, x, y);
+//	ix0 = lerp(n0, n1, sx);
+//	n0 = dotGridGradient(x0, y1, x, y);
+//	n1 = dotGridGradient(x1, y1, x, y);
+//	ix1 = lerp(n0, n1, sx);
+//	value = lerp(ix0, ix1, sy);
+//
+//	return value;
+//}
 
-int gradientsMask2D = 7;
 
-float Dot(float2 g, float x, float y) {
-	return g.x * x + g.y * y;
-}
-
-float Smooth(float t) {
-	float result = t * t * t * (t * (t * 6.0f - 15.0f) + 10.0f);
-	return result;
-}
-
-
-float Perlin2D(float2 i_point, float freq)
+float4 mod(float4 x, float4 y)
 {
-	i_point *= freq;
-
-	int ix0 = int(i_point.x);
-	int iy0 = int(i_point.y);
-	
-	float tx0 = i_point.x - ix0;
-	float ty0 = i_point.y - iy0;
-
-	float tx1 = tx0 - 1.0f;
-	float ty1 = ty0 - 1.0f;
-
-	ix0 &= hashMask;
-	iy0 &= hashMask;
-
-	int ix1 = ix0 + 1;
-	int iy1 = iy0 + 1;
-
-	int h0 = hash[ix0];
-	int h1 = hash[ix1];
-
-	float2 g00 = gradients2D[hash[h0 + iy0] & gradientsMask2D];
-	float2 g10 = gradients2D[hash[h1 + iy0] & gradientsMask2D];
-	float2 g01 = gradients2D[hash[h0 + iy1] & gradientsMask2D];
-	float2 g11 = gradients2D[hash[h1 + iy1] & gradientsMask2D];
-
-	float v00 = Dot(g00, tx0, ty0);
-	float v10 = Dot(g10, tx1, ty0);
-	float v01 = Dot(g01, tx0, ty1);
-	float v11 = Dot(g11, tx1, ty1);
-
-	float tx = Smooth(tx0);
-	float ty = Smooth(ty0);
-
-	return lerp(
-		lerp(v00, v10, tx),
-		lerp(v01, v11, tx),
-		ty) * sqrt(2.0f);
-
-
+  return x - y * floor(x / y);
 }
-// float4 OVERRIDEpermute(float4 x)
-// {
-// 	return fmod(34.0 * pow(x, 2) + x, 289.0);
-// }
 
-// float2 fade(float2 t) {
-// 	return 6.0 * pow(t, 5.0) - 15.0 * pow(t, 4.0) + 10.0 * pow(t, 3.0);
-// }
+float4 mod289_t(float4 x)
+{
+  return x - floor(x / 289.0) * 289.0;
+}
 
-// float4 OVERRIDEtaylorInvSqrt(float4 r) {
-// 	return 1.79284291400159 - 0.85373472095314 * r;
-// }
+float4 permute_t(float4 x)
+{
+  return mod289_t(((x*34.0)+1.0)*x);
+}
 
-// float mod289(float x) {
-// 	return x - floor(x * DIV_289) * 289.0;
-// }
+float4 taylorInvSqrt_t(float4 r)
+{
+  return (float4)1.79284291400159 - r * 0.85373472095314;
+}
 
-// float PerlinNoise2D(float2 P)
-// {
-// 	float4 Pi = floor(P.xyxy) + float4(0.0, 0.0, 1.0, 1.0);
-// 	float4 Pf = frac(P.xyxy) - float4(0.0, 0.0, 1.0, 1.0);
+float2 fade(float2 t) {
+  return t*t*t*(t*(t*6.0-15.0)+10.0);
+}
 
-// 	float4 ix = Pi.xzxz;
-// 	float4 iy = Pi.yyww;
-// 	float4 fx = Pf.xzxz;
-// 	float4 fy = Pf.yyww;
+// Classic Perlin noise
+float cnoise(float2 P)
+{
+  float4 Pi = floor(P.xyxy) + float4(0.0, 0.0, 1.0, 1.0);
+  float4 Pf = frac (P.xyxy) - float4(0.0, 0.0, 1.0, 1.0);
+  Pi = mod289(Pi); // To avoid truncation effects in permutation
+  float4 ix = Pi.xzxz;
+  float4 iy = Pi.yyww;
+  float4 fx = Pf.xzxz;
+  float4 fy = Pf.yyww;
 
-// 	float4 i = OVERRIDEpermute(OVERRIDEpermute(ix) + iy);
+  float4 i = permute_t(permute_t(ix) + iy);
 
-// 	float4 gx = frac(i / 41.0) * 2.0 - 1.0;
-// 	float4 gy = abs(gx) - 0.5;
-// 	float4 tx = floor(gx + 0.5);
-// 	gx = gx - tx;
+  float4 gx = frac(i / 41.0) * 2.0 - 1.0 ;
+  float4 gy = abs(gx) - 0.5 ;
+  float4 tx = floor(gx + 0.5);
+  gx = gx - tx;
 
-// 	float2 g00 = float2(gx.x, gy.x);
-// 	float2 g10 = float2(gx.y, gy.y);
-// 	float2 g01 = float2(gx.z, gy.z);
-// 	float2 g11 = float2(gx.w, gy.w);
+  float2 g00 = float2(gx.x,gy.x);
+  float2 g10 = float2(gx.y,gy.y);
+  float2 g01 = float2(gx.z,gy.z);
+  float2 g11 = float2(gx.w,gy.w);
 
-// 	float4 norm = OVERRIDEtaylorInvSqrt(float4(dot(g00, g00), dot(g01, g01), dot(g10, g10), dot(g11, g11)));
-// 	g00 *= norm.x;
-// 	g01 *= norm.y;
-// 	g10 *= norm.z;
-// 	g11 *= norm.w;
+  float4 norm = taylorInvSqrt_t(float4(dot(g00, g00), dot(g01, g01), dot(g10, g10), dot(g11, g11)));
+  g00 *= norm.x;
+  g01 *= norm.y;
+  g10 *= norm.z;
+  g11 *= norm.w;
 
-// 	float n00 = dot(g00, float2(fx.x, fy.x));
-// 	float n10 = dot(g10, float2(fx.y, fy.y));
-// 	float n01 = dot(g01, float2(fx.z, fy.z));
-// 	float n11 = dot(g11, float2(fx.w, fy.w));
+  float n00 = dot(g00, float2(fx.x, fy.x));
+  float n10 = dot(g10, float2(fx.y, fy.y));
+  float n01 = dot(g01, float2(fx.z, fy.z));
+  float n11 = dot(g11, float2(fx.w, fy.w));
 
-	// float2 fade_xy = fade(Pf.xy);
-// 	float2 n_x = lerp(float2(n00, n01), float2(n10, n11), fade_xy.x);
-// 	float n_xy = lerp(n_x.x, n_x.y, fade_xy.y);
-// 	return 2.3 * n_xy;
-// }
+  float2 fade_xy = fade(Pf.xy);
+  float2 n_x = lerp(float2(n00, n01), float2(n10, n11), fade_xy.x);
+  float n_xy = lerp(n_x.x, n_x.y, fade_xy.y);
+  return 2.3 * n_xy;
+}
+
+
 
 [numthreads(8, 8, 1)]
 void CSMain(uint3 id : SV_DispatchThreadID)
 {
-	Result[id.xy] = Perlin2D(float2(id.x, id.y), RandOffset);
-	// id.x *= 128;
-	// id.y *= 128;
-	// id.x += .5f;
-	// id.y += .3f;
-	// float result = PerlinNoise2D(id.xy) / 2 + 0.5f;
-	// Result[id.xy] = result;
+	//Result[id.xy] = cnoise(float2(id.x, id.y));
+	Result[id.xy] = 0.5f + cnoise(float2(id.x,id.y));
 }
