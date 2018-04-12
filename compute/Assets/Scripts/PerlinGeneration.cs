@@ -20,26 +20,34 @@ public class PerlinGeneration : MonoBehaviour {
     #region Private Fields
 
     private int kernelID = 0;
-    private Material destinationMaterial;
+    private TerrainData destinationTerrainData;
 
     #endregion
 
+    #region Unity Lifecycle
 
-    // Use this for initialization
+    private void Awake()
+    {
+        destinationTerrainData = destinationTerrain.terrainData;
+    }
+
     void Start () {
 
         currentTex = new RenderTexture(width, height, 24);
-        currentTex.wrapMode = TextureWrapMode.Repeat;
+        currentTex.wrapMode = TextureWrapMode.Clamp;
         currentTex.enableRandomWrite = true;
-        currentTex.filterMode = FilterMode.Point;
+        currentTex.filterMode = FilterMode.Bilinear;
 
         currentTex.Create();
         UpdateTexture();
 
     }
 
-    // Update is called once per frame
-    void UpdateTexture () {
+    #endregion
+
+    #region Private Interface
+    private void UpdateTexture()
+    {
 
         shader.SetInt("RandOffset", (int)(Time.timeSinceLevelLoad * 100));
         shader.SetTexture(kernelID, "Result", currentTex);
@@ -51,16 +59,13 @@ public class PerlinGeneration : MonoBehaviour {
 
     private void SetTerrain()
     {
-
-        int detailHeight = destinationTerrain.terrainData.detailHeight;
-        int heightmapHeight = destinationTerrain.terrainData.heightmapHeight;
-        Vector3 x = destinationTerrain.terrainData.heightmapScale;
+        Vector3 heightScale = destinationTerrain.terrainData.heightmapScale;
         Color[] colorData = ReadColorDataFromTexture(renderDestination.material.mainTexture);
-        float[,] heights = CreateHeightDataFromColors(colorData);
+        float[,] heights = CreateHeightDataFromColors(colorData, heightScale.y);
         destinationTerrain.terrainData.SetHeights(0, 0, heights);
     }
 
-    private float[,] CreateHeightDataFromColors(Color[] i_colorData)
+    private float[,] CreateHeightDataFromColors(Color[] i_colorData, float i_max)
     {
         int dim = (int)Mathf.Sqrt(i_colorData.Length);
 
@@ -72,7 +77,9 @@ public class PerlinGeneration : MonoBehaviour {
         {
             for (int j = 0; j < dim; j++)
             {
-                heightData[i, j] = i_colorData[colorIndex].r;
+                float val = (i_colorData[colorIndex].r /** i_max*/);
+                //print(test);
+                heightData[i, j] = val;
 
                 colorIndex++;
             }
@@ -94,4 +101,5 @@ public class PerlinGeneration : MonoBehaviour {
         return result.GetPixels();
     }
 
+    #endregion
 }

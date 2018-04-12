@@ -121,9 +121,11 @@ void CSMain(uint3 id : SV_DispatchThreadID)
 {	
 	float2 actualPosition = float2((id.x) / 8, (id.y) / 8); //making less blocky
 	actualPosition = actualPosition * 4.0 + float2(0.2, 1);
-	float w = 0.25;
+	float w = 0.5;
+	w = 2.0;
 	float s = 1.0;
-	float o = 0.5;
+	//float o = 0.5;
+	float o = 0;
 	float2 coord = actualPosition * s;
 	o += cnoise(coord) * w;
 	
