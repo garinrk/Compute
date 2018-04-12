@@ -34,7 +34,6 @@ public class PerlinGeneration : MonoBehaviour {
         currentTex.filterMode = FilterMode.Point;
 
         currentTex.Create();
-
         UpdateTexture();
 
     }
@@ -52,6 +51,10 @@ public class PerlinGeneration : MonoBehaviour {
 
     private void SetTerrain()
     {
+
+        int detailHeight = destinationTerrain.terrainData.detailHeight;
+        int heightmapHeight = destinationTerrain.terrainData.heightmapHeight;
+        Vector3 x = destinationTerrain.terrainData.heightmapScale;
         Color[] colorData = ReadColorDataFromTexture(renderDestination.material.mainTexture);
         float[,] heights = CreateHeightDataFromColors(colorData);
         destinationTerrain.terrainData.SetHeights(0, 0, heights);
