@@ -77,6 +77,8 @@ public class NoiseTest : MonoBehaviour {
     private int randGradient;
 
 
+    private bool flipped = false;
+
     #endregion
 
 
@@ -86,22 +88,25 @@ public class NoiseTest : MonoBehaviour {
         kernelID = shader.FindKernel("CSMain");
 
         currentTex = new RenderTexture(width, height, 24);
-        currentTex.wrapMode = TextureWrapMode.Repeat;
         currentTex.enableRandomWrite = true;
-        currentTex.filterMode = FilterMode.Point;
 
         currentTex.Create();
 
         shader.SetTexture(kernelID, "Result", currentTex);
         shader.Dispatch(kernelID, width / 8, height / 8, 1);
-        permTexture = currentTex;
-        renderDestination.material.mainTexture = permTexture;
+
+        renderDestination.material.mainTexture = currentTex;
 
         //InvokeRepeating("UpdateTexture", 0.0f, 0.5f);
     }
-	
-	// Update is called once per frame
-	void UpdateTexture () {
+    private void Update()
+    {
+        shader.Dispatch(kernelID, width / 8, height / 8, 1);
+
+        renderDestination.material.mainTexture = currentTex;
+    }
+    // Update is called once per frame
+    void UpdateTexture () {
 
         randHash = Random.Range(0, hash.Length);
         randGradient = Random.Range(0, gradients2D.Length);

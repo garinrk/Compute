@@ -10,7 +10,7 @@ public class TextureToTerrainTranslation : MonoBehaviour {
     [SerializeField] protected ComputeShader shader;
     [SerializeField] private float updateEverySeconds = 0.5f;
     [SerializeField] protected Texture photoInput;
-    [SerializeField] private Renderer renderDestination;
+    [SerializeField] private Renderer renderSource;
     [SerializeField] private int width = 128;
     [SerializeField] private int height = 128;
 
@@ -28,7 +28,7 @@ public class TextureToTerrainTranslation : MonoBehaviour {
     #region Private Fields
 
     private int kernelID = 0;
-    private Material destinationMaterial;
+    private Material sourceMaterial;
 
     #endregion
 
@@ -42,7 +42,7 @@ public class TextureToTerrainTranslation : MonoBehaviour {
     protected virtual void Start()
     {
 
-        destinationMaterial = renderDestination.material;
+        sourceMaterial = renderSource.material;
         currentTex = new RenderTexture(width, height, 24);
         kernelID = shader.FindKernel("CSMain");
         InvokeRepeating("UpdateCall", 0.0f, updateEverySeconds);
@@ -61,7 +61,7 @@ public class TextureToTerrainTranslation : MonoBehaviour {
 
     private void UpdateTerrain()
     {
-        Color[] colorData = ReadColorDataFromTexture(destinationMaterial.mainTexture);
+        Color[] colorData = ReadColorDataFromTexture(sourceMaterial.mainTexture);
         float[,] heights = CreateHeightDataFromColors(colorData);
         destinationTerrain.terrainData.SetHeights(0, 0, heights);
     }
@@ -87,7 +87,7 @@ public class TextureToTerrainTranslation : MonoBehaviour {
         shader.SetTexture(kernelID, "Result", currentTex);
         shader.Dispatch(kernelID, width / 8, height / 8, 1);
         photoInput = currentTex;
-        destinationMaterial.mainTexture = currentTex;
+        sourceMaterial.mainTexture = currentTex;
     }
 
     #endregion

@@ -32,7 +32,7 @@ private void UpdateTextureFromCompute() {
   }
 
   void Update() {
-    if (Input.GetKeyUp(KeyCode.Alpha1))
-      UpdateTextureFromCompute();
+        //if (Input.GetKeyUp(KeyCode.Alpha1))
+            UpdateTextureFromCompute();
   }
 }

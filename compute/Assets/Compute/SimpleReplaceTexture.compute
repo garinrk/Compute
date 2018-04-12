@@ -7,9 +7,16 @@
 // Textures
 int RandOffset;
 RWTexture2D<float4> Result;
-
 // Random Noise Program
 [numthreads(8,8,1)]
 void CSMain(uint3 id : SV_DispatchThreadID) {
-  Result[id.xy] = snoise(float3(id.x,id.y,RandOffset));
+	float2 ToSend = id.xy * 4.0 + float2(0.2, 1) * RandOffset * 1.0;
+	float2 period = 1.0 * 2.0;
+  //Result[id.xy] = pnoise(ToSend,period) * 0.5;
+  
+	float result = snoise(float3(id.x, id.y, RandOffset)) + snoise(float3(id.x, id.y, RandOffset));
+	//original
+	Result[id.xy] = result + result;
+	
+	//Result[id.xy] = cnoise(id.xy);
 }
