@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 33450246139262942}
   - component: {fileID: 64884913373453858}
   - component: {fileID: 23748398436385898}
+  - component: {fileID: 114108747932703634}
   m_Layer: 0
   m_Name: PerlinQuad
   m_TagString: Untagged
@@ -36,8 +37,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1865021631952562}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.7295083, y: -1.6279498, z: 4.677796}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -1.62, y: 0, z: 0}
+  m_LocalScale: {x: 9.600085, y: 9.600092, z: 9.600092}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -95,3 +96,15 @@ MeshCollider:
   m_InflateMesh: 0
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &114108747932703634
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1865021631952562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d5f734a8a0b28244b262e7ec3134c41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destinationTerrain: {fileID: 0}
