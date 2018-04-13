@@ -11,19 +11,15 @@ public class PerlinGeneration : MonoBehaviour {
     #region Unity Serialized Fields
 
     [SerializeField] private ComputeShader perlinShader;
-    [SerializeField] private ComputeShader blurShader;
     [SerializeField] private Renderer renderDestination;
     [SerializeField] private int texSize = 128;
     [SerializeField] private float updateDelta = .1f;
     [SerializeField] private float gridSize = 1.0f;
     [SerializeField] private Terrain destinationTerrain;
-    [SerializeField] private bool usePerlinOutput = true;
-    [SerializeField] private int blurSampleSize = 25;
     [SerializeField] private int clampValue = 1;
 
     //heightmap resolution = size of texture going in 
     [Header("Textures")]
-    [SerializeField] private RenderTexture currentTex;
     [SerializeField] private RenderTexture finalResult;
 
     #endregion
@@ -31,14 +27,8 @@ public class PerlinGeneration : MonoBehaviour {
     #region Private Fields
 
     private int perlinKernelID = 0;
-    private int blurKernelID = 0;
     private TerrainData destinationTerrainData;
     
-    private float xValue = 0.2f;
-    private float yValue = 1f;
-
-    private Texture noiseResult;
-
     #endregion
 
     #region Unity Lifecycle
@@ -51,18 +41,12 @@ public class PerlinGeneration : MonoBehaviour {
     void Start () {
 
         perlinKernelID = perlinShader.FindKernel("CSMain");
-        blurKernelID = blurShader.FindKernel("CSMain");
-        currentTex = new RenderTexture(texSize, texSize, 24);
-        currentTex.wrapMode = TextureWrapMode.Repeat;
-        currentTex.enableRandomWrite = true;
-        currentTex.filterMode = FilterMode.Bilinear;
 
         finalResult = new RenderTexture(texSize, texSize, 24);
         finalResult.wrapMode = TextureWrapMode.Clamp;
         finalResult.enableRandomWrite = true;
         finalResult.filterMode = FilterMode.Bilinear;
 
-        currentTex.Create();
         finalResult.Create();
 
         UpdateTexture();
@@ -73,15 +57,12 @@ public class PerlinGeneration : MonoBehaviour {
     {
         if (Input.GetKeyUp(KeyCode.Alpha1))
         {
-            xValue += updateDelta;
-            yValue += updateDelta;
             UpdateTexture();
         }
     }
 
     private void OnDisable()
     {
-        currentTex.DiscardContents();
         finalResult.DiscardContents();
     }
 
@@ -92,26 +73,15 @@ public class PerlinGeneration : MonoBehaviour {
     {
 
         perlinShader.SetInt("RandOffset", (int)(Time.timeSinceLevelLoad * 100));
-        perlinShader.SetTexture(perlinKernelID, "Result", currentTex);
-        perlinShader.SetFloat("xVal", xValue);
-        perlinShader.SetFloat("yVal", yValue);
+        perlinShader.SetTexture(perlinKernelID, "Result", finalResult);
         perlinShader.SetInt("width", texSize);
         perlinShader.SetInt("height", texSize);
         perlinShader.SetInt("clampValue", clampValue);
         perlinShader.SetFloat("gridSize", gridSize);
         perlinShader.Dispatch(perlinKernelID, texSize / 8, texSize / 8, 1);
 
-        blurShader.SetFloat("width", texSize);
-        blurShader.SetFloat("height", texSize);
-        blurShader.SetInt("sampleSize", blurSampleSize);
-        blurShader.SetTexture(blurKernelID, "input", currentTex);
-        blurShader.SetTexture(blurKernelID, "Result", finalResult);
-        blurShader.Dispatch(blurKernelID, texSize / 8, texSize / 8, 1);
-      
         renderDestination.material.mainTexture = finalResult;
 
-        if (usePerlinOutput)
-            renderDestination.material.mainTexture = currentTex;
 
         SetTerrain();
 
