@@ -14,8 +14,9 @@ public class PerlinGeneration : MonoBehaviour {
     [SerializeField] private Renderer renderDestination;
     [SerializeField] private int width = 128;
     [SerializeField] private int height = 128;
+    [SerializeField] private float valueDelta = .1f;
     [SerializeField] private Terrain destinationTerrain;
-
+ 
     [Header("Current Texture")]
     [SerializeField] private RenderTexture currentTex;
 
@@ -25,6 +26,9 @@ public class PerlinGeneration : MonoBehaviour {
 
     private int kernelID = 0;
     private TerrainData destinationTerrainData;
+    
+    private float xValue = 0.2f;
+    private float yValue = 1f;
 
     #endregion
 
@@ -47,6 +51,16 @@ public class PerlinGeneration : MonoBehaviour {
 
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyUp(KeyCode.Alpha1))
+        {
+            xValue += valueDelta;
+            yValue += valueDelta;
+            UpdateTexture();
+    }
+}
+
     private void OnDisable()
     {
         currentTex.DiscardContents();
@@ -60,6 +74,8 @@ public class PerlinGeneration : MonoBehaviour {
 
         shader.SetInt("RandOffset", (int)(Time.timeSinceLevelLoad * 100));
         shader.SetTexture(kernelID, "Result", currentTex);
+        shader.SetFloat("xVal", xValue);
+        shader.SetFloat("yVal", yValue);
         shader.Dispatch(kernelID, width / 8, height / 8, 1);
         renderDestination.material.mainTexture = currentTex;
         SetTerrain();
