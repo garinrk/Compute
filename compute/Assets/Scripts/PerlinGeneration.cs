@@ -47,6 +47,11 @@ public class PerlinGeneration : MonoBehaviour {
 
     }
 
+    private void OnDisable()
+    {
+        currentTex.DiscardContents();
+    }
+
     #endregion
 
     #region Private Interface
@@ -92,15 +97,19 @@ public class PerlinGeneration : MonoBehaviour {
 
     private Color[] ReadColorDataFromTexture(Texture i_tex)
     {
-        Texture2D result = new Texture2D(i_tex.width, i_tex.height, TextureFormat.RGBA32, false);
+        Texture2D resultTex = new Texture2D(i_tex.width, i_tex.height, TextureFormat.RGBA32, false);
 
         RenderTexture renderTex = new RenderTexture(i_tex.width, i_tex.height, 32);
+        renderTex.filterMode = FilterMode.Bilinear;
+
         Graphics.Blit(i_tex, renderTex);
+        renderTex.DiscardContents();
 
-        result.ReadPixels(new Rect(0, 0, renderTex.width, renderTex.height), 0, 0);
-        result.Apply();
+        resultTex.ReadPixels(new Rect(0, 0, renderTex.width, renderTex.height), 0, 0);
+        resultTex.Apply();
 
-        return result.GetPixels();
+        return resultTex.GetPixels();
+        
     }
 
     #endregion
