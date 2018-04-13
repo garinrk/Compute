@@ -74,8 +74,8 @@ public class PerlinGeneration : MonoBehaviour {
             xValue += valueDelta;
             yValue += valueDelta;
             UpdateTexture();
+        }
     }
-}
 
     private void OnDisable()
     {
@@ -101,15 +101,11 @@ public class PerlinGeneration : MonoBehaviour {
         blurShader.SetTexture(blurKernelID, "input", currentTex);
         blurShader.SetTexture(blurKernelID, "Result", finalResult);
         blurShader.Dispatch(blurKernelID, width / 8, height / 8, 1);
-
-        
+      
         renderDestination.material.mainTexture = finalResult;
 
-        //if(flag)
-        //    renderDestination.material.mainTexture = currentTex;
-
-
-        int x = 3;
+        if (flag)
+            renderDestination.material.mainTexture = currentTex;
         SetTerrain();
 
     }

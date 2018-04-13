@@ -1,8 +1,6 @@
 ﻿// Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel CSMain
 
-// Create a RenderTexture with enableRandomWrite flag and set it
-// with cs.SetTexture
 RWTexture2D<float4> Result;
 sampler2D input;
 float width;
@@ -12,7 +10,6 @@ int sampleSize;
 [numthreads(8,8,1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
-	// TODO: insert actual code here!
 	float2 actualPosition = float2((id.x) / width, (id.y) / height);
 	float2 actualPixelSize = float2(1.0 / width, 1.0 / height);
 
@@ -20,7 +17,6 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 
 	float4 total = float4(0.0,0.0,0.0,0.0);
 
-	//int sampleSize = 25;
 	int halfSample = sampleSize / 2;
 	float2 minPos = actualPosition - float2(halfSample * actualPixelSize.x, halfSample * actualPixelSize.y);
 	float2 maxPos = actualPosition + float2(halfSample * actualPixelSize.x, halfSample * actualPixelSize.y);
