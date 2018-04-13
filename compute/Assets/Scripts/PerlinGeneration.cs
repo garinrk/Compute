@@ -1,4 +1,8 @@
-﻿using System.Collections;
+﻿/*
+Garin Richards - u0738045
+CS6610 - Int. Computer Graphics
+*/
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -77,9 +81,7 @@ public class PerlinGeneration : MonoBehaviour {
         {
             for (int j = 0; j < dim; j++)
             {
-                float val = (i_colorData[colorIndex].r /** i_max*/);
-                //print(test);
-                heightData[i, j] = val;
+                heightData[i, j] = i_colorData[colorIndex].r;
 
                 colorIndex++;
             }
