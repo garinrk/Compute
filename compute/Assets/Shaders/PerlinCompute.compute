@@ -2,14 +2,12 @@
 #pragma kernel CSMain
 #pragma enable_d3d11_debug_symbols
 #include "UnityCG.cginc"
-#define DIV_289 0.00346020761245674740484429065744f
-
-// Create a RenderTexture with enableRandomWrite flag and set it
-// with cs.SetTexture
-int RandOffset;
 RWTexture2D<float4> Result;
-float xVal;
-float yVal;
+
+int clampValue;
+int width;
+int height;
+float gridSize;
 
 float4 mod(float4 x, float4 y)
 {
@@ -122,15 +120,12 @@ float pnoise(float2 P, float2 rep)
 [numthreads(8, 8, 1)]
 void CSMain(uint3 id : SV_DispatchThreadID)
 {	
-	float2 actualPosition = float2((id.x) / 8, (id.y) / 8); //making less blocky
-	actualPosition = actualPosition * 4.0 + float2(xVal, yVal); //0.2,1
-	float w = 0.5;
-	w = 2.0;
-	float s = 1.0;
-	//float o = 0.5;
-	float o = 0;
-	float2 coord = actualPosition * s;
-	o += cnoise(coord) * w;
+	uint2 intUV = uint2(id.x, id.y) / clampValue;
+	float2 computedUV = float2((float)intUV.x / width, (float)intUV.y / height) * clampValue;
+	float2 coordSample = computedUV * gridSize; 
 	
-	Result[id.xy] = float4(o, o, o, 1.0) /** 4*/;
+	///[-1,1] -> [0,1]
+	float o = cnoise(coordSample) / 2 + 0.5f;
+	
+	Result[id.xy] = float4(o, o, o, 1.0) ;
 }

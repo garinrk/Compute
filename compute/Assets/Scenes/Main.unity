@@ -219,6 +219,99 @@ MonoBehaviour:
   horizontalFactor: 300
   verticalFactor: 6
   characterBody: {fileID: 0}
+--- !u!1 &612492460
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 612492464}
+  - component: {fileID: 612492463}
+  - component: {fileID: 612492462}
+  - component: {fileID: 612492461}
+  m_Layer: 0
+  m_Name: NoiseGen_quad (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &612492461
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 612492460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb4c320541ddb424389632bcf8bf3d6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  perlinShader: {fileID: 7200000, guid: 3be3226dbd08291489729f325b365b39, type: 3}
+  blurShader: {fileID: 7200000, guid: 16236114d033a39418a17e00082f1172, type: 3}
+  renderDestination: {fileID: 612492462}
+  texSize: 128
+  updateDelta: 0.1
+  gridSize: 1
+  destinationTerrain: {fileID: 753438729}
+  usePerlinOutput: 1
+  blurSampleSize: 25
+  clampValue: 1
+  currentTex: {fileID: 0}
+  finalResult: {fileID: 0}
+--- !u!23 &612492462
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 612492460}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: a89dd78d7f09e3d4486a48f513b1c0eb, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!33 &612492463
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 612492460}
+  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &612492464
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 612492460}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -24.13, y: 8.94, z: 0}
+  m_LocalScale: {x: 10, y: 10, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &753438727
 GameObject:
   m_ObjectHideFlags: 0
@@ -319,14 +412,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb4c320541ddb424389632bcf8bf3d6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shader: {fileID: 7200000, guid: 3be3226dbd08291489729f325b365b39, type: 3}
+  perlinShader: {fileID: 7200000, guid: 3be3226dbd08291489729f325b365b39, type: 3}
+  blurShader: {fileID: 7200000, guid: 16236114d033a39418a17e00082f1172, type: 3}
   renderDestination: {fileID: 1019562918}
-  width: 512
-  height: 512
+  texSize: 1024
+  updateDelta: 0.1
+  gridSize: 8
   destinationTerrain: {fileID: 753438729}
-  xValue: 0.2
-  yValue: 1
+  usePerlinOutput: 0
+  blurSampleSize: 25
+  clampValue: 1
   currentTex: {fileID: 0}
+  finalResult: {fileID: 0}
 --- !u!23 &1019562918
 MeshRenderer:
   m_ObjectHideFlags: 0
