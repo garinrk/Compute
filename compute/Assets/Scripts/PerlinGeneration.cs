@@ -10,25 +10,32 @@ public class PerlinGeneration : MonoBehaviour {
 
     #region Unity Serialized Fields
 
-    [SerializeField] protected ComputeShader shader;
+    [SerializeField] private ComputeShader perlinShader;
+    [SerializeField] private ComputeShader blurShader;
     [SerializeField] private Renderer renderDestination;
     [SerializeField] private int width = 128;
     [SerializeField] private int height = 128;
     [SerializeField] private float valueDelta = .1f;
     [SerializeField] private Terrain destinationTerrain;
- 
-    [Header("Current Texture")]
+    [SerializeField] private bool flag = false;
+    [SerializeField] private int sampleSize = 25;
+
+    [Header("Textures")]
     [SerializeField] private RenderTexture currentTex;
+    [SerializeField] private RenderTexture finalResult;
 
     #endregion
 
     #region Private Fields
 
-    private int kernelID = 0;
+    private int perlinKernelID = 0;
+    private int blurKernelID = 0;
     private TerrainData destinationTerrainData;
     
     private float xValue = 0.2f;
     private float yValue = 1f;
+
+    private Texture noiseResult;
 
     #endregion
 
@@ -41,12 +48,21 @@ public class PerlinGeneration : MonoBehaviour {
 
     void Start () {
 
+        perlinKernelID = perlinShader.FindKernel("CSMain");
+        blurKernelID = blurShader.FindKernel("CSMain");
         currentTex = new RenderTexture(width, height, 24);
-        currentTex.wrapMode = TextureWrapMode.Clamp;
+        currentTex.wrapMode = TextureWrapMode.Repeat;
         currentTex.enableRandomWrite = true;
         currentTex.filterMode = FilterMode.Bilinear;
 
+        finalResult = new RenderTexture(width, height, 24);
+        finalResult.wrapMode = TextureWrapMode.Clamp;
+        finalResult.enableRandomWrite = true;
+        finalResult.filterMode = FilterMode.Bilinear;
+
         currentTex.Create();
+        finalResult.Create();
+
         UpdateTexture();
 
     }
@@ -64,6 +80,7 @@ public class PerlinGeneration : MonoBehaviour {
     private void OnDisable()
     {
         currentTex.DiscardContents();
+        finalResult.DiscardContents();
     }
 
     #endregion
@@ -72,12 +89,27 @@ public class PerlinGeneration : MonoBehaviour {
     private void UpdateTexture()
     {
 
-        shader.SetInt("RandOffset", (int)(Time.timeSinceLevelLoad * 100));
-        shader.SetTexture(kernelID, "Result", currentTex);
-        shader.SetFloat("xVal", xValue);
-        shader.SetFloat("yVal", yValue);
-        shader.Dispatch(kernelID, width / 8, height / 8, 1);
-        renderDestination.material.mainTexture = currentTex;
+        perlinShader.SetInt("RandOffset", (int)(Time.timeSinceLevelLoad * 100));
+        perlinShader.SetTexture(perlinKernelID, "Result", currentTex);
+        perlinShader.SetFloat("xVal", xValue);
+        perlinShader.SetFloat("yVal", yValue);
+        perlinShader.Dispatch(perlinKernelID, width / 8, height / 8, 1);
+
+        blurShader.SetFloat("width", width);
+        blurShader.SetFloat("height", height);
+        blurShader.SetInt("sampleSize", sampleSize);
+        blurShader.SetTexture(blurKernelID, "input", currentTex);
+        blurShader.SetTexture(blurKernelID, "Result", finalResult);
+        blurShader.Dispatch(blurKernelID, width / 8, height / 8, 1);
+
+        
+        renderDestination.material.mainTexture = finalResult;
+
+        //if(flag)
+        //    renderDestination.material.mainTexture = currentTex;
+
+
+        int x = 3;
         SetTerrain();
 
     }
