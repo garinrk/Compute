@@ -1,3 +1,9 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// file:	Assets\Shaders\PerlinCompute.compute
+//
+// summary: Perlin noise generation in Compute!
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 // Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel CSMain
 #pragma enable_d3d11_debug_symbols
@@ -127,5 +133,5 @@ void CSMain(uint3 id : SV_DispatchThreadID)
 	///[-1,1] -> [0,1]
 	float o = cnoise(coordSample) / 2 + 0.5f;
 	
-	Result[id.xy] = float4(o, o, o, 1.0) ;
+	Result[id.xy] = float4(o, o, o, 1.0);
 }

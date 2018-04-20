@@ -1,4 +1,11 @@
-﻿// Each #kernel tells which function to compile; you can have many kernels
+﻿////////////////////////////////////////////////////////////////////////////////////////////////////
+// file:	Assets\Shaders\Blur.compute
+//
+// summary:	Simple blur written in compute. Takes the average value of the 8 surrounding pixels to determine
+// the color of the center pixel.
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel CSMain
 
 RWTexture2D<float4> Result;
@@ -26,21 +33,6 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 			total += tex2Dlod(input, float4(posX, posY, 0, 1));
 		}
 	}
-
-
-	//0 1 2
-	//neighbors += tex2Dlod(input, float4(actualPosition.x - actualPixelSize.x, actualPosition.y + actualPixelSize.y, 0, 0));
-	//neighbors += tex2Dlod(input, float4(actualPosition.x, actualPosition.y + actualPixelSize.y, 0, 0));
-	//neighbors += tex2Dlod(input, float4(actualPosition.x + actualPixelSize.x, actualPosition.y + actualPixelSize.y, 0, 0));
-
-	////3 5
-	//neighbors += tex2Dlod(input, float4(actualPosition.x - actualPixelSize.x, actualPosition.y, 0, 0));
-	//neighbors += tex2Dlod(input, float4(actualPosition.x + actualPixelSize.x, actualPosition.y, 0, 0));
-
-	////6 7 8
-	//neighbors += tex2Dlod(input, float4(actualPosition.x - actualPixelSize.x, actualPosition.y - actualPixelSize.y, 0, 0));
-	//neighbors += tex2Dlod(input, float4(actualPosition.x, actualPosition.y - actualPixelSize.y, 0, 0));
-	//neighbors += tex2Dlod(input, float4(actualPosition.x + actualPixelSize.x, actualPosition.y - actualPixelSize.y, 0, 0));
 
 	total /= (sampleSize * sampleSize);
 

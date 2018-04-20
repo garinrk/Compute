@@ -1,7 +1,10 @@
-﻿/*
-Garin Richards - u0738045
-CS6610 - Int. Computer Graphics
-*/
+﻿////////////////////////////////////////////////////////////////////////////////////////////////////
+// file:	Assets\Scripts\PerlinGeneration.cs
+//
+// summary: The PerlinGeneration class handles dispatching the compute shader, and translating it to a heightmap that can be
+// used with a terrain object.
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -58,10 +61,10 @@ public class PerlinGeneration : MonoBehaviour {
 
     private void Update()
     {
-        //if (Input.GetKeyUp(KeyCode.Alpha1))
-        //{
-        //    UpdateTexture();
-        //}
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
     }
 
     private void OnDisable()
@@ -72,6 +75,13 @@ public class PerlinGeneration : MonoBehaviour {
     #endregion
 
     #region Public Interface
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// <summary>   Updates the texture with parameters, read from the input fields
+    ///             on the user interface </summary>
+    ///
+    /// <remarks>   garinrk, 4/20/2018. </remarks>
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public void UpdateTextureWithParameters()
     {
@@ -88,6 +98,13 @@ public class PerlinGeneration : MonoBehaviour {
     #endregion
 
     #region Private Interface
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// <summary>   Updates the texture, by dispatching the compute shader </summary>
+    ///
+    /// <remarks>   garinrk, 4/20/2018. </remarks>
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+
     private void UpdateTexture()
     {
 
@@ -106,12 +123,31 @@ public class PerlinGeneration : MonoBehaviour {
 
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// <summary>   Sets the terrain with data read from the generated
+    ///             perlin noise texture.                              </summary>
+    ///
+    /// <remarks>   garinrk, 4/20/2018. </remarks>
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+
     private void SetTerrain()
     {
         Color[] colorData = ReadColorDataFromTexture(renderDestination.material.mainTexture);
         float[,] heights = CreateHeightDataFromColors(colorData);
         destinationTerrain.terrainData.SetHeights(0, 0, heights);
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// <summary>   Creates height data from colors, taking into account the r channel
+    ///             of the pixel. (Adequate since the output of the compute shader is
+    ///             black and white </summary>
+    ///
+    /// <remarks>   garinrk, 4/20/2018. </remarks>
+    ///
+    /// <param name="i_colorData">  array of colors </param>
+    ///
+    /// <returns>   The new height data from colors. </returns>
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private float[,] CreateHeightDataFromColors(Color[] i_colorData)
     {
@@ -133,6 +169,17 @@ public class PerlinGeneration : MonoBehaviour {
 
         return heightData;
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// <summary>   Reads color data from texture, using a blit call. Blit coipes source texture
+    ///             onto a destination render texture </summary>
+    ///
+    /// <remarks>   garinrk, 4/20/2018. </remarks>
+    ///
+    /// <param name="i_tex">    input texture </param>
+    ///
+    /// <returns>   An array of colors. </returns>
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private Color[] ReadColorDataFromTexture(Texture i_tex)
     {

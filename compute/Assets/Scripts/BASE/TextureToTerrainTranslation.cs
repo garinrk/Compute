@@ -1,4 +1,11 @@
-﻿using System.Collections;
+﻿////////////////////////////////////////////////////////////////////////////////////////////////////
+// file:	Assets\Scripts\BASE\TextureToTerrainTranslation.cs
+//
+// summary:	A base class that was originally used for translating textures generated
+// by a compute shader to a heightmap use in a terrain. DEPRECATED
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
