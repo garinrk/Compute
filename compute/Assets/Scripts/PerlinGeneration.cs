@@ -13,7 +13,6 @@ public class PerlinGeneration : MonoBehaviour {
     [SerializeField] private ComputeShader perlinShader;
     [SerializeField] private Renderer renderDestination;
     [SerializeField] private int texSize = 128;
-    [SerializeField] private float updateDelta = .1f;
     [SerializeField] private float gridSize = 1.0f;
     [SerializeField] private Terrain destinationTerrain;
     [SerializeField] private int clampValue = 1;
@@ -89,13 +88,12 @@ public class PerlinGeneration : MonoBehaviour {
 
     private void SetTerrain()
     {
-        Vector3 heightScale = destinationTerrain.terrainData.heightmapScale;
         Color[] colorData = ReadColorDataFromTexture(renderDestination.material.mainTexture);
-        float[,] heights = CreateHeightDataFromColors(colorData, heightScale.y);
+        float[,] heights = CreateHeightDataFromColors(colorData);
         destinationTerrain.terrainData.SetHeights(0, 0, heights);
     }
 
-    private float[,] CreateHeightDataFromColors(Color[] i_colorData, float i_max)
+    private float[,] CreateHeightDataFromColors(Color[] i_colorData)
     {
         int dim = (int)Mathf.Sqrt(i_colorData.Length);
 
