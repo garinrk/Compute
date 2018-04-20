@@ -5,6 +5,8 @@ CS6610 - Int. Computer Graphics
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using System;
 
 public class PerlinGeneration : MonoBehaviour {
 
@@ -16,6 +18,8 @@ public class PerlinGeneration : MonoBehaviour {
     [SerializeField] private float gridSize = 1.0f;
     [SerializeField] private Terrain destinationTerrain;
     [SerializeField] private int clampValue = 1;
+    [SerializeField] private InputField clampField;
+    [SerializeField] private InputField sizeField;
 
     //heightmap resolution = size of texture going in 
     [Header("Textures")]
@@ -54,15 +58,31 @@ public class PerlinGeneration : MonoBehaviour {
 
     private void Update()
     {
-        if (Input.GetKeyUp(KeyCode.Alpha1))
-        {
-            UpdateTexture();
-        }
+        //if (Input.GetKeyUp(KeyCode.Alpha1))
+        //{
+        //    UpdateTexture();
+        //}
     }
 
     private void OnDisable()
     {
         finalResult.DiscardContents();
+    }
+
+    #endregion
+
+    #region Public Interface
+
+    public void UpdateTextureWithParameters()
+    {
+        float newSampleSize = float.Parse(sizeField.text);
+        int newClampValue = -99;
+
+        Int32.TryParse(clampField.text, out newClampValue);
+
+        gridSize = newSampleSize;
+        clampValue = newClampValue;
+        UpdateTexture();
     }
 
     #endregion
